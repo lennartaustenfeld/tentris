@@ -132,6 +132,16 @@ target_link_libraries(ids2hypertrie
         -static
         )
 
+set_target_properties(ids2hypertrie PROPERTIES LINK_FLAGS_RELEASE -s)
+
+add_executable(tentris_ntriple src/exec/tools/TentrisNtriple.cpp)
+target_link_libraries(tentris_ntriple
+        tentris
+        -static
+        )
+
+set_target_properties(tentris_ntriple PROPERTIES LINK_FLAGS_RELEASE -s)
+
 add_dependencies(ids2hypertrie tentris)
 
 if (CMAKE_BUILD_TYPE MATCHES "Release")
@@ -140,6 +150,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
 
     set_property(TARGET ids2hypertrie PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
     set_property(TARGET rdf2ids PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
+    set_property(TARGET tentris_ntriple PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 endif ()
 
 option(TENTRIS_BUILD_TESTS "build tests alongside the project" OFF)
