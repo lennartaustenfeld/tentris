@@ -22,6 +22,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: lennart-austenfeld.de:5000//tentris:latest
+          tags: lennart-austenfeld.de:5000/tentris:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
