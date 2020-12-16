@@ -32,6 +32,8 @@ jobs:
           tags: registry.lennart-austenfeld.de/tentris:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: debug
+        run: tree
       - name: Push image
         run: docker push registry.lennart-austenfeld.de/tentris:latest
       - name: Extract binaries
