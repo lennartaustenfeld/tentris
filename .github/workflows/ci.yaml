@@ -33,7 +33,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: debug
-        run: tree
+        run: ls -lah
       - name: Push image
         run: docker push registry.lennart-austenfeld.de/tentris:latest
       - name: Extract binaries
