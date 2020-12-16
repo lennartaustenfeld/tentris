@@ -36,9 +36,35 @@ jobs:
         run: docker push registry.lennart-austenfeld.de/tentris:latest
       - name: Checkout
         uses: actions/checkout@v1
-      - name: debug
-        run: ls -lah
       - name: Extract binaries
         run: ./.github/workflows/scripts/extract-binaries.sh registry.lennart-austenfeld.de/tentris:latest
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload tentris
+        id: upload-tentris-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: tentris_clang9_libstdcxx9.zip
+          asset_name: tentris_clang9_libstdcxx9.zip
+          asset_content_type: application/zip
+      - name: Upload benchmarktools
+        id: upload-benchmarktools-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: benchmarktools_clang9_libstdcxx9.zip
+          asset_name: benchmarktools_clang9_libstdcxx9.zip
+          asset_content_type: application/zip
