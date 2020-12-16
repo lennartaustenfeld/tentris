@@ -32,10 +32,12 @@ jobs:
           tags: registry.lennart-austenfeld.de/tentris:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: debug
-        run: ls -lah
       - name: Push image
         run: docker push registry.lennart-austenfeld.de/tentris:latest
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: debug
+        run: ls -lah
       - name: Extract binaries
         run: ./.github/workflows/scripts/extract-binaries.sh ${{ steps.docker_build.outputs.digest }}
       - name: Image digest
