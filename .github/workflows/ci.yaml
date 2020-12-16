@@ -39,6 +39,6 @@ jobs:
       - name: debug
         run: ls -lah
       - name: Extract binaries
-        run: ./.github/workflows/scripts/extract-binaries.sh ${{ steps.docker_build.outputs.digest }}
+        run: ./.github/workflows/scripts/extract-binaries.sh registry.lennart-austenfeld.de/tentris:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
