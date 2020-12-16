@@ -2,8 +2,8 @@ name: ci
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - '*'
 
 jobs:
   main:
@@ -36,16 +36,25 @@ jobs:
         run: docker push registry.lennart-austenfeld.de/tentris:latest
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Extract tag name
+        id: tag
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            return context.payload.ref.replace(/\/refs\/tags\//, '');
+      - name: Echo
+        run: echo ${{ steps.tag.outputs.result }}
       - name: Extract binaries
-        run: ./.github/workflows/scripts/extract-binaries.sh registry.lennart-austenfeld.de/tentris:latest
+        run: ./.github/workflows/scripts/extract-binaries.sh registry.lennart-austenfeld.de/tentris:${{ steps.tag.outputs.result }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.tag.outputs.result }}
+          release_name: ${{ steps.tag.outputs.result }}
           draft: true
           prerelease: false
       - name: Upload tentris
@@ -56,7 +65,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: tentris_clang9_libstdcxx9.zip
-          asset_name: tentris_clang9_libstdcxx9.zip
+          asset_name: tentris_${{ steps.tag.outputs.result }}_clang9_libstdcxx9.zip
           asset_content_type: application/zip
       - name: Upload benchmarktools
         id: upload-benchmarktools-asset 
@@ -66,5 +75,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: benchmarktools_clang9_libstdcxx9.zip
-          asset_name: benchmarktools_clang9_libstdcxx9.zip
+          asset_name: benchmarktools_${{ steps.tag.outputs.result }}_clang9_libstdcxx9.zip
           asset_content_type: application/zip
