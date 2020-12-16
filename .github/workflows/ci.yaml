@@ -48,7 +48,15 @@ jobs:
       - name: Push image
         run: docker push registry.lennart-austenfeld.de/tentris:${{ steps.get-ref.outputs.tag }}; docker push registry.lennart-austenfeld.de/tentris:latest
       - name: Extract binaries
-        run: ./.github/workflows/scripts/extract-binaries.sh registry.lennart-austenfeld.de/tentris:${{ steps.get-ref.outputs.tag }}
+        run: |
+          container_id=$(docker create tentris:latest)
+          docker cp ${container_id}:/tentris_server ./tentris_server
+          docker cp ${container_id}:/tentris_terminal ./tentris_terminal
+          docker cp ${container_id}:/rdf2ids ./rdf2ids
+          docker cp ${container_id}:/ids2hypertrie ./ids2hypertrie
+          tag=$(echo $GITHUB_REF | rev | cut -d'/' -f1 | rev)
+          zip benchmarktools_clang9_libstdcxx9.zip rdf2ids ids2hypertrie
+          zip tentris_clang9_libstdcxx9.zip tentris_server tentris_terminal
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
